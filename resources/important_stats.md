@@ -6,7 +6,9 @@
 Source: https://www.youtube.com/watch?v=dkN1u8cmqj8
 
 ## Iteration 2
-Currently working with [EasyEDA](https://easyeda.com/) to design and simulate.
+![image](https://github.com/user-attachments/assets/beb28892-cdeb-4647-88d1-3543783d31c3)
+
+Worked with [EasyEDA](https://easyeda.com/) to design and simulate.
 
 # Hardware
 
