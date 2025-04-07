@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  backend:
+    build: .
+    container_name: sensor-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    env_file:
+      - ./app/.env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14
+    container_name: sensor-db
+    restart: always
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sensordb
+
+volumes:
+  db_data:
