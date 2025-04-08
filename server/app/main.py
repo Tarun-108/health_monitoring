@@ -63,6 +63,8 @@ def set_config(config: SensorConfigSchema, db: Session = Depends(get_db)):
 
 @app.post("/sensor/data", response_model=SensorDataResponse)
 def store_data(data: SensorDataSchema, db: Session = Depends(get_db)):
+    if(data.bpm < 10 or data.bpm_avg == 0 or data.ds18b20_temp < 0 or data.dht11_temp < 0):
+        raise HTTPException(status_code=400, detail="Invalid sensor data")
     entry = SensorData(**data.dict(), timestamp=datetime.now())
     db.add(entry)
     db.commit()
