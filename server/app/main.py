@@ -92,7 +92,7 @@ def get_history(
         if end_date:
             query = query.filter(SensorData.timestamp <= end_date)
 
-        total = query.count()
+        totalPages = query.count()//page_size + (query.count() % page_size > 0)
         skip = (page - 1) * page_size
 
         records = (
@@ -104,7 +104,7 @@ def get_history(
 
         return PaginatedSensorHistory(
             data=[SensorDataResponse.from_orm(record) for record in records],
-            total=total,
+            totalPages=totalPages,
             page=page,
             page_size=page_size
         )

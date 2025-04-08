@@ -28,7 +28,7 @@ class SensorDataResponse(SensorDataSchema):
 
 class PaginatedSensorHistory(BaseModel):
     data: list[SensorDataResponse]
-    total: int
+    totalPages: int
     page: int
     page_size: int
     
