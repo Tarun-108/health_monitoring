@@ -22,3 +22,15 @@ class SensorDataSchema(BaseModel):
 
 class SensorDataResponse(SensorDataSchema):
     timestamp: datetime
+
+    class Config:
+        from_attributes = True
+
+class PaginatedSensorHistory(BaseModel):
+    data: list[SensorDataResponse]
+    total: int
+    page: int
+    page_size: int
+    
+    class Config:
+        orm_mode = True

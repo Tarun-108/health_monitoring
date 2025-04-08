@@ -1,11 +1,12 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from datetime import datetime
+from typing import Optional
 
 from database import SessionLocal, engine, Base
 from models import SensorConfig, SensorData
-from schemas import SensorConfigSchema, SensorDataSchema, SensorDataResponse
+from schemas import SensorConfigSchema, SensorDataSchema, SensorDataResponse, PaginatedSensorHistory
 
 # Initialize DB
 Base.metadata.create_all(bind=engine)
@@ -62,7 +63,7 @@ def set_config(config: SensorConfigSchema, db: Session = Depends(get_db)):
 
 @app.post("/sensor/data", response_model=SensorDataResponse)
 def store_data(data: SensorDataSchema, db: Session = Depends(get_db)):
-    entry = SensorData(**data.dict(), timestamp=datetime.utcnow())
+    entry = SensorData(**data.dict(), timestamp=datetime.now())
     db.add(entry)
     db.commit()
     db.refresh(entry)
@@ -75,6 +76,38 @@ def get_latest_data(db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No data available")
     return latest
 
-@app.get("/sensor/history", response_model=list[SensorDataResponse])
-def get_history(db: Session = Depends(get_db)):
-    return db.query(SensorData).order_by(SensorData.timestamp.desc()).all()
+@app.get("/sensor/history", response_model=PaginatedSensorHistory)
+def get_history(
+    db: Session = Depends(get_db),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, gt=0, le=100),
+    start_date: Optional[datetime] = Query(None),
+    end_date: Optional[datetime] = Query(None)
+):
+    try:
+        query = db.query(SensorData)
+
+        if start_date:
+            query = query.filter(SensorData.timestamp >= start_date)
+        if end_date:
+            query = query.filter(SensorData.timestamp <= end_date)
+
+        total = query.count()
+        skip = (page - 1) * page_size
+
+        records = (
+            query.order_by(SensorData.timestamp.desc())
+            .offset(skip)
+            .limit(page_size)
+            .all()
+        )
+
+        return PaginatedSensorHistory(
+            data=[SensorDataResponse.from_orm(record) for record in records],
+            total=total,
+            page=page,
+            page_size=page_size
+        )
+    except Exception as e:
+        print(f"Error fetching history: {e}")   
+        raise HTTPException(status_code=500, detail=str(e))
