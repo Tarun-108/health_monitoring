@@ -2,7 +2,12 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+Create .env and mention these environment variables:
+```bash
+NEXT_PUBLIC_OPENROUTER_API_KEY=your_openrouter_api_key
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
