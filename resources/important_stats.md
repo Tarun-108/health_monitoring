@@ -1,11 +1,6 @@
 # Circuit Diagram
 
-## Iteration 1
-![Circuit Design for System](esp8266_based_health_monitoring_system_circuit_design_itr1.png)
-
-Source: https://www.youtube.com/watch?v=dkN1u8cmqj8
-
-## Iteration 2
+## Iteration 
 ![image](https://github.com/user-attachments/assets/beb28892-cdeb-4647-88d1-3543783d31c3)
 
 Worked with [EasyEDA](https://easyeda.com/) to design and simulate.
